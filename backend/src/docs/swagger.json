@@ -1,0 +1,140 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Agendamentos - LDW",
+    "version": "1.0.0",
+    "description": "Documentação interativa da API REST para gerenciamento de consultas médicas e atendimentos."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Servidor Local de Desenvolvimento"
+    }
+  ],
+  "paths": {
+    "/agendamentos": {
+      "get": {
+        "summary": "Listar todos os agendamentos",
+        "tags": ["Agendamentos"],
+        "responses": {
+          "200": {
+            "description": "Lista de agendamentos retornada com sucesso"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cadastrar novo agendamento",
+        "tags": ["Agendamentos"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgendamentoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Agendamento criado com sucesso" },
+          "400": { "description": "Dados inválidos ou campos ausentes" },
+          "409": { "description": "Este horário já está reservado para este profissional" }
+        }
+      }
+    },
+    "/agendamentos/{id}": {
+      "get": {
+        "summary": "Buscar agendamento por ID",
+        "tags": ["Agendamentos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Agendamento encontrado" },
+          "404": { "description": "Agendamento não encontrado" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar dados ou status de um agendamento",
+        "tags": ["Agendamentos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAgendamentoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Agendamento atualizado com sucesso" },
+          "404": { "description": "Agendamento não encontrado" },
+          "409": { "description": "Este horário já está reservado para este profissional" }
+        }
+      },
+      "delete": {
+        "summary": "Remover agendamento por ID",
+        "tags": ["Agendamentos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Agendamento removido com sucesso" },
+          "404": { "description": "Agendamento não encontrado" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Agendamento": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "paciente": { "type": "string", "example": "Neuso" },
+          "profissional": { "type": "string", "example": "Dr. Carlos Mendes" },
+          "data_horario": { "type": "string", "example": "2026-10-15T14:30:00.000Z" },
+          "status": { "type": "string", "example": "Agendado" },
+          "createdAt": { "type": "string", "example": "2026-10-04T10:00:00.000Z" }
+        }
+      },
+      "CreateAgendamentoDTO": {
+        "type": "object",
+        "required": ["paciente", "profissional", "data_horario"],
+        "properties": {
+          "paciente": { "type": "string", "example": "Neuso" },
+          "profissional": { "type": "string", "example": "Dr. Carlos Mendes" },
+          "data_horario": { "type": "string", "example": "2026-10-15T14:30:00.000Z" }
+        }
+      },
+      "UpdateAgendamentoDTO": {
+        "type": "object",
+        "properties": {
+          "paciente": { "type": "string", "example": "Neuso (Atualizado)" },
+          "profissional": { "type": "string", "example": "Dra. Maria Souza" },
+          "data_horario": { "type": "string", "example": "2026-10-16T10:00:00.000Z" },
+          "status": { "type": "string", "example": "Realizado" }
+        }
+      }
+    }
+  }
+}

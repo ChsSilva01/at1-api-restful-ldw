@@ -3,4 +3,5 @@ packages:
   - 'app'
   - 'landing'
 allowBuilds:
+  '@scarf/scarf': false
   esbuild: true

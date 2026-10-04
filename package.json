@@ -4,7 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compose:up": "docker compose up -d",
+    "compose:down": "docker compose down",
+    "compose:logs": "docker compose logs -f",
+    "compose:build": "docker compose up -d --build",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose stop db",
+    "dev:backend": "pnpm --filter backend dev"
   },
   "keywords": [],
   "author": "",

@@ -1,8 +1,10 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { sequelize } from './config/database';
-import { appRoutes } from './routes';
+import { sequelize } from './config/database.js';
+import { appRoutes } from './routes/index.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './docs/swagger.json' with { type: 'json' };
 
 dotenv.config();
 
@@ -11,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', mensagem: 'Servidor operacional.' });
