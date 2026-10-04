@@ -78,6 +78,17 @@
         }
       }
     },
+    "/auth/profile": {
+      "get": {
+        "summary": "Obter perfil do utilizador autenticado (Rota Protegida)",
+        "tags": ["Autenticação"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Dados do utilizador retornado com sucesso" },
+          "401": { "description": "Não autorizado (Token ausente ou inválido)" }
+        }
+      }
+    },
     "/agendamentos": {
       "get": {
         "summary": "Listar todos os agendamentos (Rota Protegida)",
@@ -114,14 +125,78 @@
         }
       }
     },
-    "/auth/profile": {
+    "/agendamentos/{id}": {
       "get": {
-        "summary": "Obter perfil do utilizador autenticado (Rota Protegida)",
-        "tags": ["Autenticação"],
+        "summary": "Obter agendamento por ID (Rota Protegida)",
+        "tags": ["Agendamentos"],
         "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do agendamento",
+            "schema": { "type": "integer", "example": 1 }
+          }
+        ],
         "responses": {
-          "200": { "description": "Dados do utilizador retornado com sucesso" },
-          "401": { "description": "Não autorizado (Token ausente ou inválido)" }
+          "200": { "description": "Agendamento encontrado com sucesso" },
+          "404": { "description": "Agendamento não encontrado" },
+          "401": { "description": "Não autorizado" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar agendamento por ID (Rota Protegida)",
+        "tags": ["Agendamentos"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do agendamento",
+            "schema": { "type": "integer", "example": 1 }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "paciente": { "type": "string", "example": "Maria Silva Atualizada" },
+                  "profissional": { "type": "string", "example": "Dr. Carlos Mendes" },
+                  "data_horario": { "type": "string", "format": "date-time", "example": "2026-10-15T15:00:00.000Z" },
+                  "status": { "type": "string", "example": "Realizado" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Agendamento atualizado com sucesso" },
+          "404": { "description": "Agendamento não encontrado" },
+          "401": { "description": "Não autorizado" }
+        }
+      },
+      "delete": {
+        "summary": "Remover agendamento por ID (Rota Protegida)",
+        "tags": ["Agendamentos"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do agendamento",
+            "schema": { "type": "integer", "example": 1 }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Agendamento removido com sucesso" },
+          "404": { "description": "Agendamento não encontrado" },
+          "401": { "description": "Não autorizado" }
         }
       }
     }
