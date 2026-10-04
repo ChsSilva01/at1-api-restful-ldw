@@ -1,152 +1,154 @@
-import { useState, useEffect } from "react";
-import type { Agendamento } from "./types/agendamentos";
-import "./App.css";
-
-// Ajuste as URLs para apontarem para as suas rotas do Express/Sequelize
-const API_URL = "http://localhost:3000/agendamentos"; 
+import { useState, useEffect } from 'react';
+import { api } from './services/api';
+import type { Agendamento } from './types';
 
 export default function App() {
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  
+  const [paciente, setPaciente] = useState('');
+  const [profissional, setProfissional] = useState('');
+  const [dataHorario, setDataHorario] = useState('');
 
-  // Estados para o formulário de NOVO AGENDAMENTO
-  const [paciente, setPaciente] = useState<string>("");
-  const [profissional, setProfissional] = useState<string>("");
-  const [dataHorario, setDataHorario] = useState<string>("");
-  const [enviando, setEnviando] = useState<boolean>(false);
-
-  const opcoesProfissionais = [
-    "Dr. João Silva (Clínico Geral)",
-    "Dra. Maria Souza (Cardiologista)",
-    "Dr. Carlos Mendes (Ortopedista)"
-  ];
-
-  async function carregarAgendamentos() {
-    try {
-      setLoading(true);
-      setError(null);
-      const resposta = await fetch(API_URL);
-      if (!resposta.ok) throw new Error("Erro na comunicação com o servidor.");
-      
-      const dados: Agendamento[] = await resposta.json();
-      setAgendamentos(dados);
-    } catch (err: any) {
-      setError(err.message || "Ocorreu um erro desconhecido.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    carregarAgendamentos();
-  }, []);
-
-  const submeterAgendamento = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      setEnviando(true);
-      const resposta = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          paciente,
-          profissional,
-          dataHorario,
-          status: 'Agendado'
-        })
-      });
-
-      if (!resposta.ok) throw new Error("Falha ao registrar agendamento.");
-
-      // Limpa o formulário após sucesso
-      setPaciente("");
-      setProfissional("");
-      setDataHorario("");
-      
-      // Recarrega a lista de consultas
-      await carregarAgendamentos();
-      alert("Consulta agendada com sucesso!");
-    } catch (err: any) {
-      alert("Erro ao agendar: " + err.message);
-    } finally {
-      setEnviando(false);
+      const res = await api.post('/auth/login', { email, password });
+      const newToken = res.data.token;
+      localStorage.setItem('token', newToken);
+      setToken(newToken);
+    } catch {
+      alert('Erro no login. Verifique as credenciais.');
     }
   };
 
-  if (loading) return <div className="loading">Carregando agenda...</div>;
-  if (error) return <div className="error">Aviso: Não foi possível carregar os dados. ({error})</div>;
+  const fetchAgendamentos = async () => {
+    try {
+      const res = await api.get<Agendamento[]>('/agendamentos');
+      setAgendamentos(res.data);
+    } catch (err) {
+      console.error('Erro ao buscar agendamentos', err);
+    }
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.post('/agendamentos', {
+        paciente,
+        profissional,
+        data_horario: dataHorario
+      });
+      setPaciente('');
+      setProfissional('');
+      setDataHorario('');
+      fetchAgendamentos();
+    } catch {
+      alert('Erro ao criar agendamento.');
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchAgendamentos();
+    }
+  }, [token]);
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+          <h2 className="text-xl font-bold mb-4 text-gray-800">Login - Painel</h2>
+          <input 
+            type="email" 
+            placeholder="E-mail" 
+            value={email} 
+            onChange={e => setEmail(e.target.value)} 
+            className="w-full p-2 border rounded mb-3" 
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="Senha" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            className="w-full p-2 border rounded mb-4" 
+            required 
+          />
+          <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Entrar</button>
+        </form>
+      </div>
+    );
+  }
 
   return (
-    <div className="container">
-      <header>
-        <h1>Painel de Agendamentos</h1>
-        <p>Gerenciamento de consultas médicas</p>
-      </header>
-
-      <main className="dashboard-grid">
-        {/* Card do Formulário de Agendamento */}
-        <div className="metric-card form-card">
-          <h3>Nova Consulta</h3>
-          <form onSubmit={submeterAgendamento}>
-            <div className="form-group">
-              <label>Nome do Paciente:</label>
-              <input
-                type="text"
-                required
-                value={paciente}
-                onChange={(e) => setPaciente(e.target.value)}
-                placeholder="Ex: Neuso"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Profissional:</label>
-              <select 
-                required
-                value={profissional} 
-                onChange={(e) => setProfissional(e.target.value)}
-              >
-                <option value="" disabled>Selecione um médico</option>
-                {opcoesProfissionais.map((prof) => (
-                  <option key={prof} value={prof}>{prof}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Data e Horário:</label>
-              <input
-                type="datetime-local"
-                required
-                value={dataHorario}
-                onChange={(e) => setDataHorario(e.target.value)}
-              />
-            </div>
-
-            <button type="submit" className="submit-btn" disabled={enviando}>
-              {enviando ? "Agendando..." : "Confirmar Agendamento"}
-            </button>
-          </form>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Painel de Agendamentos</h1>
+          <button 
+            onClick={() => { localStorage.removeItem('token'); setToken(''); }} 
+            className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+          >
+            Sair
+          </button>
         </div>
 
-        {/* Card: Lista de Consultas Agendadas */}
-        <div className="metric-card tech-card">
-          <h3>Próximos Atendimentos ({agendamentos.length})</h3>
-          <ul>
-            {agendamentos.length === 0 ? (
-              <li>Nenhuma consulta agendada.</li>
-            ) : (
-              agendamentos.map((consulta) => (
-                <li key={consulta.id} className="tech-item" style={{ borderBottom: '1px solid #ccc', padding: '10px 0' }}>
-                  <strong>{consulta.paciente}</strong> com {consulta.profissional} <br/>
-                  <small>{new Date(consulta.dataHorario).toLocaleString()} - Status: {consulta.status}</small>
-                </li>
-              ))
-            )}
-          </ul>
+        <form onSubmit={handleCreate} className="bg-white p-4 rounded-lg shadow-md mb-6 grid grid-cols-1 md:grid-cols-4 gap-3">
+          <input 
+            type="text" 
+            placeholder="Paciente" 
+            value={paciente} 
+            onChange={e => setPaciente(e.target.value)} 
+            className="p-2 border rounded" 
+            required 
+          />
+          <input 
+            type="text" 
+            placeholder="Profissional" 
+            value={profissional} 
+            onChange={e => setProfissional(e.target.value)} 
+            className="p-2 border rounded" 
+            required 
+          />
+          <input 
+            type="datetime-local" 
+            value={dataHorario} 
+            onChange={e => setDataHorario(e.target.value)} 
+            className="p-2 border rounded" 
+            required 
+          />
+          <button type="submit" className="bg-green-600 text-white p-2 rounded hover:bg-green-700">Cadastrar</button>
+        </form>
+
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-200 text-gray-700 text-sm">
+                <th className="p-3">Paciente</th>
+                <th className="p-3">Profissional</th>
+                <th className="p-3">Data/Horário</th>
+              </tr>
+            </thead>
+            <tbody>
+              {agendamentos.map(item => (
+                <tr key={item.id} className="border-t hover:bg-gray-50">
+                  <td className="p-3">{item.paciente}</td>
+                  <td className="p-3">{item.profissional}</td>
+                  <td className="p-3">{new Date(item.data_horario).toLocaleString()}</td>
+                </tr>
+              ))}
+              {agendamentos.length === 0 && (
+                <tr>
+                  <td colSpan={3} className="p-4 text-center text-gray-500">Nenhum agendamento encontrado.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

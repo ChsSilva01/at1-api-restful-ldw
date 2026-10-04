@@ -113,6 +113,17 @@
           "401": { "description": "Não autorizado" }
         }
       }
+    },
+    "/auth/profile": {
+      "get": {
+        "summary": "Obter perfil do utilizador autenticado (Rota Protegida)",
+        "tags": ["Autenticação"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Dados do utilizador retornado com sucesso" },
+          "401": { "description": "Não autorizado (Token ausente ou inválido)" }
+        }
+      }
     }
   }
 }
