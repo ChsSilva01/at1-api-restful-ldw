@@ -73,7 +73,9 @@
           }
         },
         "responses": {
-          "200": { "description": "Login efetuado com sucesso, retorna o token" },
+          "200": {
+            "description": "Login efetuado com sucesso, retorna o token"
+          },
           "401": { "description": "Credenciais inválidas" }
         }
       }
@@ -95,7 +97,9 @@
         "tags": ["Agendamentos"],
         "security": [{ "BearerAuth": [] }],
         "responses": {
-          "200": { "description": "Lista de agendamentos retornada com sucesso" },
+          "200": {
+            "description": "Lista de agendamentos retornada com sucesso"
+          },
           "401": { "description": "Não autorizado (Token ausente ou inválido)" }
         }
       },
@@ -111,8 +115,15 @@
                 "type": "object",
                 "properties": {
                   "paciente": { "type": "string", "example": "Maria Silva" },
-                  "profissional": { "type": "string", "example": "Dr. Carlos Mendes" },
-                  "data_horario": { "type": "string", "format": "date-time", "example": "2026-10-15T14:30:00.000Z" }
+                  "profissional": {
+                    "type": "string",
+                    "example": "Dr. Carlos Mendes"
+                  },
+                  "data_horario": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2026-10-15T14:30:00.000Z"
+                  }
                 },
                 "required": ["paciente", "profissional", "data_horario"]
               }
@@ -165,9 +176,19 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "paciente": { "type": "string", "example": "Maria Silva Atualizada" },
-                  "profissional": { "type": "string", "example": "Dr. Carlos Mendes" },
-                  "data_horario": { "type": "string", "format": "date-time", "example": "2026-10-15T15:00:00.000Z" },
+                  "paciente": {
+                    "type": "string",
+                    "example": "Maria Silva Atualizada"
+                  },
+                  "profissional": {
+                    "type": "string",
+                    "example": "Dr. Carlos Mendes"
+                  },
+                  "data_horario": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2026-10-15T15:00:00.000Z"
+                  },
                   "status": { "type": "string", "example": "Realizado" }
                 }
               }

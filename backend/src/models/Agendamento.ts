@@ -9,7 +9,6 @@ export class Agendamento extends Model {
   declare status: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
- 
 }
 
 Agendamento.init(
@@ -17,29 +16,29 @@ Agendamento.init(
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
     },
     paciente: {
       type: DataTypes.STRING(100),
-      allowNull: false
+      allowNull: false,
     },
     profissional: {
       type: DataTypes.STRING(100),
-      allowNull: false
+      allowNull: false,
     },
     data_horario: {
-      type: DataTypes.DATE, 
-      allowNull: false
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     status: {
       type: DataTypes.ENUM('Agendado', 'Realizado', 'Cancelado'),
-      defaultValue: 'Agendado', 
-      allowNull: false
+      defaultValue: 'Agendado',
+      allowNull: false,
     },
   },
   {
     sequelize,
     tableName: 'agendamentos',
-    timestamps: true 
-  }
+    timestamps: true,
+  },
 );

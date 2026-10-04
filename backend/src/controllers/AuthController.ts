@@ -11,10 +11,14 @@ export class AuthController {
       const { email, password } = req.body;
 
       if (!email || !password) {
-        return res.status(400).json({ erro: 'Email e senha sao obrigatorios.' });
+        return res
+          .status(400)
+          .json({ erro: 'Email e senha sao obrigatorios.' });
       }
 
-      const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+      const user = await User.findOne({
+        where: { email: email.trim().toLowerCase() },
+      });
       if (!user || !user.senha_hash) {
         return res.status(401).json({ erro: 'Credenciais invalidas.' });
       }
@@ -27,12 +31,12 @@ export class AuthController {
       const token = jwt.sign(
         { id: user.id, email: user.email, nome: user.nome },
         JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '1h' },
       );
 
       return res.status(200).json({
         mensagem: 'Login realizado com sucesso!',
-        token
+        token,
       });
     } catch (error: any) {
       return res.status(500).json({ erro: error.message });
@@ -50,12 +54,12 @@ export class AuthController {
       return res.status(200).json({
         id: authUser.id,
         nome: authUser.nome,
-        email: authUser.email
+        email: authUser.email,
       });
     } catch (error: any) {
-      return res.status(500).json({ 
-        erro: 'Erro ao buscar perfil.', 
-        detalhe: error.message 
+      return res.status(500).json({
+        erro: 'Erro ao buscar perfil.',
+        detalhe: error.message,
       });
     }
   }

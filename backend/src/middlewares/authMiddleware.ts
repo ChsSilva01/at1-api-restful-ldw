@@ -2,7 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/auth';
 
-export function authMiddleware(req: Request, res: Response, next: NextFunction) {
+export function authMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const authHeader = req.headers.authorization;
 
@@ -18,6 +22,6 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 
     return next();
   } catch {
-    return res.status(401).json({ message: "Token inválido" });
+    return res.status(401).json({ message: 'Token inválido' });
   }
 }

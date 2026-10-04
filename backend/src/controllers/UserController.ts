@@ -7,11 +7,13 @@ export class UserController {
   public static async index(req: Request, res: Response): Promise<Response> {
     try {
       const users = await User.findAll({
-        attributes: ['id', 'nome', 'email', 'createdAt']
+        attributes: ['id', 'nome', 'email', 'createdAt'],
       });
       return res.status(200).json(users);
     } catch (error: any) {
-      return res.status(500).json({ erro: 'Erro ao listar usuarios.', detalhe: error.message });
+      return res
+        .status(500)
+        .json({ erro: 'Erro ao listar usuarios.', detalhe: error.message });
     }
   }
 
@@ -21,16 +23,24 @@ export class UserController {
       const { nome, email, password } = req.body;
 
       if (!nome || !email || !password) {
-        return res.status(400).json({ erro: 'Nome, email e senha sao obrigatorios.' });
+        return res
+          .status(400)
+          .json({ erro: 'Nome, email e senha sao obrigatorios.' });
       }
 
       if (password.length < 6) {
-        return res.status(400).json({ erro: 'A senha deve conter no minimo 6 caracteres.' });
+        return res
+          .status(400)
+          .json({ erro: 'A senha deve conter no minimo 6 caracteres.' });
       }
 
-      const userExistente = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+      const userExistente = await User.findOne({
+        where: { email: email.trim().toLowerCase() },
+      });
       if (userExistente) {
-        return res.status(409).json({ erro: 'Ja existe um usuario cadastrado com este e-mail.' });
+        return res
+          .status(409)
+          .json({ erro: 'Ja existe um usuario cadastrado com este e-mail.' });
       }
 
       const senha_hash = await bcrypt.hash(password, 10);
@@ -38,15 +48,21 @@ export class UserController {
       const novoUser = await User.create({
         nome: nome.trim(),
         email: email.trim().toLowerCase(),
-        senha_hash
+        senha_hash,
       });
 
       return res.status(201).json({
         mensagem: 'Usuario cadastrado com sucesso!',
-        usuario: { id: novoUser.id, nome: novoUser.nome, email: novoUser.email }
+        usuario: {
+          id: novoUser.id,
+          nome: novoUser.nome,
+          email: novoUser.email,
+        },
       });
     } catch (error: any) {
-      return res.status(500).json({ erro: 'Erro ao cadastrar usuario.', detalhe: error.message });
+      return res
+        .status(500)
+        .json({ erro: 'Erro ao cadastrar usuario.', detalhe: error.message });
     }
   }
 }
