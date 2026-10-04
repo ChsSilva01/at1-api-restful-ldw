@@ -33,4 +33,57 @@ O repositório conta com verificações automáticas para garantir a integridade
 * **CI/CD**: O GitHub Actions executa automaticamente a esteira de build e testes a cada Pull Request ou Push na branch principal.
 * **Husky**: Executa validações locais automáticas antes de cada commit.
 
+## Instalação e Execução
+
+### Pré-requisitos
+
+* Docker e Docker Compose
+* Node.js e pnpm
+
+### Passos para execução
+
+1. Clone o repositório e acesse a pasta raiz:
+```bash
+git clone https://github.com/ChsSilva01/at1-api-restful-ldw.git
+cd at1-api-restful-ldw
+
+```
+
+
+2. Suba os containers com Docker Compose:
+```bash
+docker compose up --build -d
+
+```
+
+
+3. Execute as migrações do banco de dados:
+```bash
+docker exec -it api-service npx sequelize-cli db:migrate --config dist/config/database.js --url "postgres://postgres:postgres@db:5432/postgres"
+
+```
+
+
+
+### Comandos Úteis
+
+* **Formatação de código (Prettier):**
+```bash
+pnpm run format:fix
+
+```
+
+
+* **Análise estática (ESLint):**
+```bash
+pnpm run lint
+
+```
+
+
+* **Parar o ambiente:**
+```bash
+docker compose down --volumes
+
+```
 
