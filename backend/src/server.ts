@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { sequelize } from './config/database.js';
 import { appRoutes } from './routes/index.js';
 import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from './docs/swagger.json' with { type: 'json' };
+import swaggerDocument from './docs/swagger.json';
 
 dotenv.config();
 
