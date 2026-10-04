@@ -30,13 +30,17 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Validar Padronização (ESLint)
+        working-directory: ./backend
         run: pnpm run lint
 
       - name: Checagem de Tipos (TypeScript)
-        run: pnpm tsc --noEmit
+        working-directory: ./backend
+        run: pnpm exec tsc --noEmit
 
       - name: Compilar o Projeto (Build)
+        working-directory: ./backend
         run: pnpm run build
 
       - name: Validar Build da Imagem Docker
+        working-directory: ./backend
         run: docker build -t api-backend:ci .
