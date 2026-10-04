@@ -8,8 +8,6 @@ import swaggerDocument from './docs/swagger.json';
 
 dotenv.config();
 
-const valorIncorreto: number = "texto incompativel";
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
