@@ -27,7 +27,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Instalar Dependências
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Compilar o Projeto (Type Check & Build)
         working-directory: ./backend
