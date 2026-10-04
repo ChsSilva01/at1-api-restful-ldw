@@ -21,7 +21,7 @@ jobs:
       - name: 2. Configurar o pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 11
+          version: 12
 
       - name: 3. Configurar Node.js 24 com Cache
         uses: actions/setup-node@v4
