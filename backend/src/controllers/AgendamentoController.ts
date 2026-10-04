@@ -66,7 +66,7 @@ export class AgendamentoController {
       const novoAgendamento = await Agendamento.create({
         paciente: paciente.trim(),
         profissional: profissional.trim(),
-        data_horario: dataFormatada // Agora passa o Date e o TypeScript fica feliz
+        data_horario: dataFormatada 
       });
 
       return res.status(201).json({

@@ -6,21 +6,18 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   try {
     const authHeader = req.headers.authorization;
 
-    // Verifica se o token foi enviado no formato "Bearer <token>"
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ erro: 'Token nao fornecido.' });
     }
 
     const token = authHeader.split(' ')[1];
 
-    // Valida a assinatura matematica do token com a chave secreta
     const usuarioDecodificado = jwt.verify(token, JWT_SECRET);
 
-    // Salva os dados do usuario na requisicao
     (req as any).user = usuarioDecodificado;
 
     return next();
-  } catch (error: any) {
-    return res.status(401).json({ erro: 'Token invalido ou expirado.' });
+  } catch {
+    return res.status(401).json({ message: "Token inválido" });
   }
 }

@@ -10,7 +10,8 @@
     "compose:build": "docker compose up -d --build",
     "db:up": "docker compose up -d db",
     "db:down": "docker compose stop db",
-    "dev:backend": "pnpm --filter backend dev"
+    "dev:backend": "pnpm --filter backend dev",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
@@ -28,5 +29,8 @@
     "ignoredBuiltDependencies": [
       "@scarf/scarf"
     ]
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }

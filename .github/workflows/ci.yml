@@ -2,37 +2,53 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  lint-and-build:
-    name: Validar Código e Imagem Docker
+  qualidade-e-build:
+    name: Validar Padronizacao, Tipos e Compilacao
     runs-on: ubuntu-latest
 
     steps:
-      - name: Baixar Código do Repositório
+      - name: 1. Baixar codigo do repositorio
         uses: actions/checkout@v4
 
-      - name: Configurar pnpm
-        uses: pnpm/action-setup@v3
+      - name: 2. Configurar o pnpm
+        uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 11
 
-      - name: Configurar Node.js
+      - name: 3. Configurar Node.js 24 com Cache
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Instalar Dependências
-        run: pnpm install
+      - name: 4. Instalar dependencias do monorepo
+        run: pnpm install --frozen-lockfile
 
-      - name: Compilar o Projeto (Type Check & Build)
-        working-directory: ./backend
-        run: pnpm run build
+      - name: 5. Validar Padronizacao de Codigo (ESLint)
+        run: |
+          cd backend
+          pnpm run lint
 
-      - name: Validar Build da Imagem Docker
-        working-directory: ./backend
-        run: docker build -t api-backend:ci .
+      - name: 6. Validar Formatacao (Prettier)
+        run: |
+          cd backend
+          pnpm run format:check
+
+      - name: 7. Checagem de Tipos no Backend (tsc --noEmit)
+        run: |
+          cd backend
+          pnpm run type-check
+
+      - name: 8. Compilar Backend para Producao
+        run: |
+          cd backend
+          pnpm run build

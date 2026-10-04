@@ -28,18 +28,18 @@ Agendamento.init(
       allowNull: false
     },
     data_horario: {
-      type: DataTypes.DATE, // Salva a data e a hora exata
+      type: DataTypes.DATE, 
       allowNull: false
     },
     status: {
       type: DataTypes.ENUM('Agendado', 'Realizado', 'Cancelado'),
-      defaultValue: 'Agendado', // Todo agendamento novo começa com esse status
+      defaultValue: 'Agendado', 
       allowNull: false
     },
   },
   {
     sequelize,
     tableName: 'agendamentos',
-    timestamps: true // Mantém o createdAt e updatedAt automáticos
+    timestamps: true 
   }
 );
