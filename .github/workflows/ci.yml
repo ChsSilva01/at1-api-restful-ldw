@@ -1,0 +1,42 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-build:
+    name: Validar Código e Imagem Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar Código do Repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Instalar Dependências
+        run: pnpm install --frozen-lockfile
+
+      - name: Validar Padronização (ESLint)
+        run: pnpm run lint
+
+      - name: Checagem de Tipos (TypeScript)
+        run: pnpm tsc --noEmit
+
+      - name: Compilar o Projeto (Build)
+        run: pnpm run build
+
+      - name: Validar Build da Imagem Docker
+        run: docker build -t api-backend:ci .

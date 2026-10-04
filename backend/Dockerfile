@@ -1,30 +1,36 @@
-# 1. Define a imagem de origem base 
-FROM node:24-alpine
+# Estágio 1: Compilação (Build)
+FROM node:24-alpine AS builder
 
-# 2. Configura o diretorio global do pnpm
+# Configura o diretorio global do pnpm
 ENV PNPM_HOME="/root/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-# 3. Define diretório de trabalho interno do container
 WORKDIR /app
 
-# 4. Instalar o pnpm globalmente
+# Instala o pnpm globalmente
 RUN npm install -g pnpm
-
-# Desativa restrições
 RUN pnpm config set strict-dep-builds false
 
-# 5. Copia os arquivos de manifesto
+# Copia os arquivos de manifesto e instala dependências
 COPY package.json ./
-
-# 6. Força o pnpm a instalar as dependências de forma plana (compatível com volumes do Docker)
 RUN pnpm install --shamefully-hoist
 
-# 7. Copia todo o restante do código
+# Copia o código-fonte e realiza a compilação (gera a pasta dist)
 COPY . .
+RUN pnpm run build
 
-# 8. Expõe a porta
+# Estágio 2: Produção (Runner Otimizado)
+FROM node:24-alpine AS runner
+
+WORKDIR /app
+
+# Copia apenas o necessário do estágio de build para rodar a API
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+
+# Expõe a porta 3000
 EXPOSE 3000
 
-# 9. Comando para inicializar a aplicação
-CMD ["pnpm", "dev"]
+# Executa o script de produção (substitua por "npm start" se configurado no package.json)
+CMD ["node", "dist/server.js"]
