@@ -3,24 +3,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable('agendamentos', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      nome: {
+      paciente: {
         type: Sequelize.STRING(100),
         allowNull: false
       },
-      email: {
-        type: Sequelize.STRING(150),
-        allowNull: false,
-        unique: true
+      profissional: {
+        type: Sequelize.STRING(100),
+        allowNull: false
       },
-      senha_hash: {
-        type: Sequelize.STRING(255),
+      data_horario: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
+      status: {
+        type: Sequelize.ENUM('Agendado', 'Realizado', 'Cancelado'),
+        defaultValue: 'Agendado',
         allowNull: false
       },
       createdAt: {
@@ -37,6 +41,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('agendamentos');
   }
 };

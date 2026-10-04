@@ -9,6 +9,7 @@ export class Agendamento extends Model {
   declare status: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
+ 
 }
 
 Agendamento.init(
@@ -34,7 +35,7 @@ Agendamento.init(
       type: DataTypes.ENUM('Agendado', 'Realizado', 'Cancelado'),
       defaultValue: 'Agendado', // Todo agendamento novo começa com esse status
       allowNull: false
-    }
+    },
   },
   {
     sequelize,

@@ -11,9 +11,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+
 app.use(cors());
 app.use(express.json());
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api/docs', swaggerUi.serve as any, swaggerUi.setup(swaggerDocument) as any);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', mensagem: 'Servidor operacional.' });
@@ -26,8 +28,8 @@ async function main() {
     await sequelize.authenticate();
     console.log('Conexao com o banco de dados estabelecida com sucesso.');
 
-    app.listen(PORT, () => {
-      console.log(`Servidor rodando em http://localhost:${PORT}`);
+    app.listen(Number(PORT), '0.0.0.0', () => {
+      console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
     });
   } catch (error) {
     console.error('Erro ao conectar com o banco de dados:', error);
