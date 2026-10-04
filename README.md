@@ -1,2 +1,1 @@
-# at1-api-restful-ldw
-projeto feito em Node.js, Express, Sequelize e Swagger
+[![Continuous Integration](https://github.com/ChsSilva01/at1-api-restful-ldw/actions/workflows/ci.yml/badge.svg)](https://github.com/ChsSilva01/at1-api-restful-ldw/actions/workflows/ci.yml)
