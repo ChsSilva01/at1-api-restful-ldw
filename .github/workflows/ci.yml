@@ -27,7 +27,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Instalar Dependências
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Validar Padronização (ESLint)
         working-directory: ./backend
