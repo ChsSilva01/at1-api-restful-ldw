@@ -97,11 +97,9 @@ export class AgendamentoController {
         },
       });
       if (agendamentoExistente) {
-        return res
-          .status(409)
-          .json({
-            erro: 'Este profissional ja possui um agendamento neste horario.',
-          });
+        return res.status(409).json({
+          erro: 'Este profissional ja possui um agendamento neste horario.',
+        });
       }
 
       const novoAgendamento = await Agendamento.create({
@@ -119,12 +117,10 @@ export class AgendamentoController {
         createdAt: novoAgendamento.createdAt,
       });
     } catch (error: any) {
-      return res
-        .status(500)
-        .json({
-          erro: 'Erro ao cadastrar agendamento.',
-          detalhe: error.message,
-        });
+      return res.status(500).json({
+        erro: 'Erro ao cadastrar agendamento.',
+        detalhe: error.message,
+      });
     }
   }
 
@@ -182,11 +178,9 @@ export class AgendamentoController {
           },
         });
         if (horarioOcupado && horarioOcupado.id !== id) {
-          return res
-            .status(409)
-            .json({
-              erro: 'Este horario ja esta reservado para este profissional.',
-            });
+          return res.status(409).json({
+            erro: 'Este horario ja esta reservado para este profissional.',
+          });
         }
 
         agendamento.data_horario = dataFormatada;
@@ -207,12 +201,10 @@ export class AgendamentoController {
         updatedAt: agendamento.updatedAt,
       });
     } catch (error: any) {
-      return res
-        .status(500)
-        .json({
-          erro: 'Erro ao atualizar agendamento.',
-          detalhe: error.message,
-        });
+      return res.status(500).json({
+        erro: 'Erro ao atualizar agendamento.',
+        detalhe: error.message,
+      });
     }
   }
 
