@@ -8,16 +8,14 @@ import swaggerDocument from './docs/swagger.json';
 
 dotenv.config();
 
+const valorIncorreto: number = "texto incompativel";
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(
-  '/api/docs',
-  swaggerUi.serve as any,
-  swaggerUi.setup(swaggerDocument) as any,
-);
+app.use('/api/docs', swaggerUi.serve as any, swaggerUi.setup(swaggerDocument) as any);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', mensagem: 'Servidor operacional.' });
@@ -32,10 +30,9 @@ async function main() {
 
     app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);
-      console.log(
-        `Health Check disponível em: http://localhost:${PORT}/api/health`,
-      );
+      console.log(`Health Check disponível em: http://localhost:${PORT}/api/health`)
     });
+
   } catch (error) {
     console.error('Erro ao conectar com o banco de dados:', error);
   }

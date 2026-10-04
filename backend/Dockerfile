@@ -12,8 +12,8 @@ RUN npm install -g pnpm
 RUN pnpm config set strict-dep-builds false
 
 # Copia os arquivos de manifesto e instala dependências
-COPY package.json ./
-RUN pnpm install --shamefully-hoist
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --shamefully-hoist --no-frozen-lockfile
 
 # Copia o código-fonte e realiza a compilação (gera a pasta dist)
 COPY . .
@@ -24,13 +24,14 @@ FROM node:24-alpine AS runner
 
 WORKDIR /app
 
-# Copia apenas o necessário do estágio de build para rodar a API
+# Copia apenas o necessário do estágio de build para rodar a API e migrations
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/migrations ./migrations
 
 # Expõe a porta 3000
 EXPOSE 3000
 
-# Executa o script de produção (substitua por "npm start" se configurado no package.json)
+# Executa o script de produção
 CMD ["node", "dist/server.js"]

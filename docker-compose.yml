@@ -29,15 +29,11 @@ services:
       - DB_SSL=false
       - NODE_ENV=development
       - CI=true
-      # Habilita o polling para detectar alteracoes de arquivos no Windows (Docker Desktop / WSL2)
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=500
     depends_on:
       - db
-    volumes:
-      - ./backend:/app
-      - backend_node_modules:/app/node_modules
-    command: pnpm dev
+    command: sh -c "npx sequelize-cli db:migrate --config dist/config/database.js --url 'postgres://postgres:postgres@db:5432/postgres' && node dist/server.js"
 
 volumes:
   pgdata:
